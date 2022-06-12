@@ -7,9 +7,9 @@ class tableController {
         page = page || 1
         limit = limit || 9
         let offset = page * limit - limit
-        let clothes;
-        clothes = await Table.findAndCountAll({limit, offset})
-        return res.json(clothes)
+        let fields;
+        fields = await Table.findAndCountAll({limit, offset})
+        return res.json(fields)
     }
     async create (req, res, next) {
         try {

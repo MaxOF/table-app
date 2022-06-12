@@ -4,6 +4,7 @@ import {ThunkAction} from "redux-thunk";
 import {setAppError, SetAppErrorType} from "../app/appReducer";
 import {AppRootStateType} from "../app/store";
 import {addValues, fetchValues, ValuesType} from "../api/tableAPI";
+import {Dispatch} from "redux";
 
 
 //types >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -27,7 +28,6 @@ export const tableReducer = (state: InitialStateType = initialState, action: Act
         case 'TABLE/CREATE-FIELD':
             return {
                 ...state, fields: [...state.fields, action.field]
-
             }
         default:
             return state
@@ -52,16 +52,18 @@ type ThunkType = ThunkAction<Promise<void>, AppRootStateType, unknown, DispatchT
 export const createField = (values: ValuesType): ThunkType => (dispatch) => {
     return addValues(values)
         .then((res: AxiosResponse) => {
-            console.log(res.data)
+
+            console.log(res)
         })
         .catch((e: AxiosError) => {
             dispatch(setAppError('Wrong create Field 😠'))
         })
 }
-export const fetchTable = (): ThunkType => (dispatch) => {
+export const fetchTable = (): any => (dispatch: Dispatch) => {
     return fetchValues()
-        .then((res: AxiosResponse) => {
-            console.log(res.data)
+        .then((res) => {
+
+            console.log(res.rows)
         })
         .catch((e: AxiosError) => {
             dispatch(setAppError('Wrong create Field 😠'))
