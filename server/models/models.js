@@ -2,7 +2,7 @@ const sequelize = require('../db')
 const {DataTypes} = require('sequelize')
 
 
-const TableModel = sequelize.define('tableModel', {
+const Table = sequelize.define('table', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
     amount: {type: DataTypes.INTEGER, allowNull: false},
@@ -10,5 +10,5 @@ const TableModel = sequelize.define('tableModel', {
 })
 
 module.exports = {
-    TableModel
+    Table
 }
