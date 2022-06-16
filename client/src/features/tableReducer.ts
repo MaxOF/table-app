@@ -64,14 +64,14 @@ export const tableReducer = (state: InitialStateType = initialState, action: Act
 
 //types for actions>>>>>>>>>>>>>
 type ActionsType = SortValuesType | CreateFieldType | SetFieldsType | SetCurrentPageType | SetTotalCountType
-export type SortValuesType = ReturnType<typeof sortValues>
+export type SortValuesType = ReturnType<typeof sortValuesAC>
 export type CreateFieldType = ReturnType<typeof createFieldAC>
 export type SetFieldsType = ReturnType<typeof setFields>
 export type SetCurrentPageType = ReturnType<typeof setCurrentPage>
 export type SetTotalCountType = ReturnType<typeof setTotalCount>
 
 //actions>>>>>>>>>>>>>
-export const sortValues = (sortValues: string) => ({type: 'TABLE/SORT-VALUES', sortValues} as const)
+export const sortValuesAC = (sortValues: string) => ({type: 'TABLE/SORT-VALUES', sortValues} as const)
 export const createFieldAC = (field: FieldType) => ({type: 'TABLE/CREATE-FIELD', field} as const)
 export const setFields = (fields: FieldType[]) => ({type: 'TABLE/SET-FIELDS', fields} as const)
 export const setCurrentPage = (pageNumber: number) => ({type: 'TABLE/SET-CURRENT-PAGE', pageNumber} as const)
@@ -97,7 +97,8 @@ export const fetchTable = (): ThunkType => (dispatch: Dispatch, getState: () => 
     const payload = {
         page: state.pageNumber || 1,
         totalFields: state.totalFields || 0,
-        pageCount: state.pageCount || 10
+        pageCount: state.pageCount || 10,
+        sortValues: state.sortValues || ''
     }
 
     return fetchValues(payload)

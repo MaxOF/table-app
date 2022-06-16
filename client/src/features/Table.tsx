@@ -1,6 +1,6 @@
 import React, {ChangeEvent, KeyboardEvent, useEffect, useState} from 'react';
 import {useDispatch} from "react-redux";
-import {createField, DispatchThunkTable, fetchTable, sortValues} from "./tableReducer";
+import {createField, DispatchThunkTable, fetchTable, sortValuesAC} from "./tableReducer";
 import classes from './Table.module.css'
 
 import {Modal} from "../utils/Modal/Modal";
@@ -12,7 +12,7 @@ import {Fields} from "./Fields/Fields";
 export const Table = () => {
 
     const dispatch = useDispatch<ThunkDispatch<AppRootStateType, unknown, DispatchThunkTable>>()
-    const {fields, totalFields, pageCount, pageNumber} = useAppSelector(state => state.table)
+    const {fields, totalFields, pageCount, pageNumber, sortValues} = useAppSelector(state => state.table)
 
     const [value, setValue] = useState([0, 30]);
 
@@ -30,7 +30,7 @@ export const Table = () => {
     }
     useEffect(() => {
         dispatch(fetchTable())
-    }, [fields])
+    }, [pageNumber, sortValues])
 
     const createFieldHandler = () => {
         dispatch(createField({name, amount: 2, distance: 3}))
@@ -39,27 +39,27 @@ export const Table = () => {
 
     // for sort
 
-    const sortPacksMinCardsHandler = () => {
-        dispatch(sortValues('1amount'))
+    const sortAmountDown = () => {
+        dispatch(sortValuesAC('1amount'))
     }
-    const sortPacksMaxCardsHandler = () => {
-        dispatch(sortValues('0amount'))
-    }
-
-    const SortPackNameMinCards = () => {
-        dispatch(sortValues('1name'))
+    const sortAmountUp = () => {
+        dispatch(sortValuesAC('0amount'))
     }
 
-    const SortPackNameMaxCards = () => {
-        dispatch(sortValues('0name'))
+    const sortNameDown = () => {
+        dispatch(sortValuesAC('1name'))
     }
 
-    const SortPackUpdatedMinCards = () => {
-        dispatch(sortValues('0distance'))
+    const sortNameUp = () => {
+        dispatch(sortValuesAC('0name'))
     }
 
-    const SortPackUpdatedMaxCards = () => {
-        dispatch(sortValues('1distance'))
+    const sortDistanceDown = () => {
+        dispatch(sortValuesAC('0distance'))
+    }
+
+    const sortDistanceUp = () => {
+        dispatch(sortValuesAC('1distance'))
     }
 
     return (
@@ -90,40 +90,68 @@ export const Table = () => {
                         <button className={classes.modalButton} onClick={createFieldHandler}>Сохранить</button>
                     </div>
                 </Modal>
+                {/*<Modal active={modalActive} setActive={setModalActive}>*/}
+                {/*    <div className={classes.modalTitle}>Добавить новое поле</div>*/}
+                {/*    <div className={classes.modalBox}>*/}
+                {/*        <input*/}
+                {/*            value={name}*/}
+                {/*            onKeyPress={onKeyPressModalHandler}*/}
+                {/*            onChange={onChangeModalHandler}*/}
+                {/*            className={classes.modalInput}*/}
+                {/*            placeholder={'Enter your new pack name...'}*/}
+                {/*            autoFocus*/}
+                {/*        />*/}
+                {/*    </div>*/}
+                {/*    <div className={classes.modalBox}>*/}
+                {/*        <input*/}
+                {/*            value={name}*/}
+                {/*            onKeyPress={onKeyPressModalHandler}*/}
+                {/*            onChange={onChangeModalHandler}*/}
+                {/*            className={classes.modalInput}*/}
+                {/*            placeholder={'Enter your new pack name...'}*/}
+                {/*            autoFocus*/}
+                {/*        />*/}
+                {/*    </div>*/}
+                {/*    <div>*/}
+                {/*        <button className={classes.modalButton} onClick={createFieldHandler}>Сохранить</button>*/}
+                {/*        <button className={classes.modalButton} onClick={createFieldHandler}>Сохранить</button>*/}
+                {/*    </div>*/}
+                {/*</Modal>*/}
 
                 <div className={classes.boxCardsPack}>
                     <div className={classes.blockNameCards}>
                     <span>Дата
                         <span className={classes.boxArrow}>
-                        <i className={`${classes.arrow} ${classes.arrowUp}`}
-                           onClick={SortPackNameMinCards}>
-                        </i>
-                        <i className={`${classes.arrow} ${classes.arrowDown}`}
-                           onClick={SortPackNameMaxCards}>
-                        </i>
+
                     </span>
                     </span>
                         <span>Название
-                        <span className={classes.boxArrow}>
                         <i className={`${classes.arrow} ${classes.arrowUp}`}
-                           onClick={sortPacksMinCardsHandler}>
+                           onClick={sortNameDown}>
                         </i>
                         <i className={`${classes.arrow} ${classes.arrowDown}`}
-                           onClick={sortPacksMaxCardsHandler}>
+                           onClick={sortNameUp}>
                         </i>
-                    </span>
                     </span>
                         <span>Количество
                         <span className={classes.boxArrow}>
                         <i className={`${classes.arrow} ${classes.arrowUp}`}
-                           onClick={SortPackUpdatedMinCards}>
+                           onClick={sortAmountDown}>
                         </i>
                         <i className={`${classes.arrow} ${classes.arrowDown}`}
-                           onClick={SortPackUpdatedMaxCards}>
+                           onClick={sortAmountUp}>
                         </i>
                     </span>
                     </span>
                         <span>Расстояние</span>
+                        <span className={classes.boxArrow}>
+                        <i className={`${classes.arrow} ${classes.arrowUp}`}
+                           onClick={sortDistanceUp}>
+                        </i>
+                        <i className={`${classes.arrow} ${classes.arrowDown}`}
+                           onClick={sortDistanceDown}>
+                        </i>
+                    </span>
                     </div>
                     {
                         fields.map(f => {
@@ -132,7 +160,7 @@ export const Table = () => {
                                     key={f.id}
                                     id={f.id}
                                     date={new Date(f.createdAt).toLocaleDateString()}
-                                    name={f.name}
+                                    name={f.name.toLowerCase()}
                                     amount={f.amount}
                                     distance={f.distance}
                                 />

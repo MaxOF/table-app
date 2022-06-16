@@ -17,7 +17,8 @@ export type ValuesType = {
     distance: number
 }
 export type GetTableParamsType = {
-    page: number
-    totalFields: number
-    pageCount: number
+    page?: number
+    totalFields?: number
+    pageCount?: number
+    sortValues?: string
 }
