@@ -1,12 +1,12 @@
 .flexBlockCards {
     display: flex;
 }
+.boxCardsPack {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px 2px rgba(34, 60, 80, 0.2);
+    margin-top: 20px;
 
-.sidebar {
-    width: 300px;
-    background-color: #b9f6ca;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
 }
 
 .blockCards {
@@ -14,6 +14,7 @@
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     padding: 30px;
+    margin: 0 auto;
 }
 
 .btnHandlerAdd {
@@ -22,11 +23,11 @@
 
 .btnHandler, .btnHandlerAdd {
     justify-content: center;
-    width: 150px;
+    width: 180px;
     padding: 10px;
     border-radius: 20px;
     border: none;
-    background: linear-gradient(135deg, #baf792 0%, #0eaf0e 100%);
+    background: linear-gradient(135deg, #93aeca 0%, #5eb3ec 100%);
     color: white;
     cursor: pointer;
     transition: background 9999999s;
@@ -46,7 +47,7 @@
     padding: 10px;
     border-radius: 20px;
     border: none;
-    background-color: green;
+    background-color: #5eb3ec;
     color: white;
     cursor: pointer;
     margin-right: 10px;
@@ -74,17 +75,12 @@
 .blockNameCards {
     display: flex;
     justify-content: space-around;
-    background-color: lightgreen;
+    background-color: #5eb3ec;
     height: 40px;
     padding-top: 10px;
 }
 
-.boxCardsPack {
-    border: 1px solid lightgray;
-    border-radius: 5px;
-    box-shadow: 0 5px 10px 2px rgba(34, 60, 80, 0.2);
-    margin-top: 20px;
-}
+
 
 .boxButtonAndSlider {
     margin: 20px;
@@ -166,20 +162,20 @@ a .arrow {
     height: 36px;
     font-size: 18px;
     margin-top: 20px;
-    background-color: #4CAF50;
+    background-color: #5eb3ec;
     border-radius: 30px;
     color: white;
     cursor: pointer;
     transition-duration: 0.4s;
-    border: 2px solid #4CAF50;
+    border: 2px solid #5eb3ec;
     text-decoration: none;
     display: inline-block;
 }
 
 .modalButton:hover {
-    border: 2px solid #4CAF50;
+    border: 2px solid #5eb3ec;
     background-color: white;
-    color: #4CAF50;
+    color: #5eb3ec;
 }
 
 .modalBox {

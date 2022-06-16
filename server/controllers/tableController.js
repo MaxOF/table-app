@@ -5,7 +5,7 @@ class tableController {
     async fetchAll(req, res) {
         let {limit, page} = req.query
         page = page || 1
-        limit = limit || 9
+        limit = limit || 10
         let offset = page * limit - limit
         let fields;
         fields = await Table.findAndCountAll({limit, offset})

@@ -1,46 +1,43 @@
-import React, {ChangeEvent, KeyboardEvent, useCallback, useEffect, useState} from 'react';
+import React, {ChangeEvent, KeyboardEvent, useEffect, useState} from 'react';
 import {useDispatch} from "react-redux";
-import {createField, fetchTable, sortValues} from "./tableReducer";
+import {createField, DispatchThunkTable, fetchTable, sortValues} from "./tableReducer";
 import classes from './Table.module.css'
-import {fetchValues} from "../api/tableAPI";
+
+import {Modal} from "../utils/Modal/Modal";
+import {ThunkDispatch} from "redux-thunk";
+import {AppRootStateType, useAppSelector} from "../app/store";
+import {Paginator} from "./paginator/Paginator";
+import {Fields} from "./Fields/Fields";
 
 export const Table = () => {
 
-
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<ThunkDispatch<AppRootStateType, unknown, DispatchThunkTable>>()
+    const {fields, totalFields, pageCount, pageNumber} = useAppSelector(state => state.table)
 
     const [value, setValue] = useState([0, 30]);
-
 
     const [modalActive, setModalActive] = useState<boolean>(false);
     const [name, setName] = useState<string>('')
 
-    // useEffect(() => {
-    //     dispatch(fetchPackCardsTC())
-    // }, [pageCount, page, currentPackName, myCards, maxCardsCount, minCardsCount, sortPacks])
-
-
-    // const addPack = useCallback((name: string) => {
-    //     if (name.trim() !== '') {
-    //         dispatch(createField({name, amount: 0, distance: 0}))
-    //         setName('')
-    //         setModalActive(false)
-    //     }
-    // }, [dispatch])
-    //
-    // const onChangeModalHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    //     setName(e.currentTarget.value)
-    // }
-    // const onKeyPressModalHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-    //     if (e.key === 'Enter') addPack(name)
-    // }
+    const onChangeModalHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setName(e.currentTarget.value)
+    }
+    const onKeyPressModalHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            dispatch(createField({name, amount: 2, distance: 3}))
+            setModalActive(false)
+        }
+    }
     useEffect(() => {
         dispatch(fetchTable())
-    }, [])
+    }, [fields])
 
+    const createFieldHandler = () => {
+        dispatch(createField({name, amount: 2, distance: 3}))
+        setModalActive(false)
+    }
 
     // for sort
-
 
     const sortPacksMinCardsHandler = () => {
         dispatch(sortValues('1amount'))
@@ -65,37 +62,38 @@ export const Table = () => {
         dispatch(sortValues('1distance'))
     }
 
-
-
-
     return (
         <div className={classes.flexBlockCards}>
             <div className={classes.blockCards}>
+
+                {/*Modal window for adding field*/}
+
                 <div className={classes.boxSearchButton}>
                     <button
                         onClick={() => setModalActive(true)}
                         className={classes.btnHandlerAdd}
                     >
-                        Add new pack
+                        Добавить новое поле
                     </button>
                 </div>
-                {/*<Modal active={modalActive} setActive={setModalActive}>*/}
-                {/*    <div className={classes.modalTitle}>Add new pack</div>*/}
-                {/*    <div className={classes.modalBox}>*/}
-                {/*        <input*/}
-                {/*            value={name}*/}
-                {/*            onKeyPress={onKeyPressModalHandler}*/}
-                {/*            onChange={onChangeModalHandler}*/}
-                {/*            className={classes.modalInput}*/}
-                {/*            placeholder={'Enter your new pack name...'}*/}
-                {/*            autoFocus*/}
-                {/*        />*/}
-                {/*        <button className={classes.modalButton} onClick={() => addPack(name)}>save</button>*/}
-                {/*    </div>*/}
-                {/*</Modal>*/}
+                <Modal active={modalActive} setActive={setModalActive}>
+                    <div className={classes.modalTitle}>Добавить новое поле</div>
+                    <div className={classes.modalBox}>
+                        <input
+                            value={name}
+                            onKeyPress={onKeyPressModalHandler}
+                            onChange={onChangeModalHandler}
+                            className={classes.modalInput}
+                            placeholder={'Enter your new pack name...'}
+                            autoFocus
+                        />
+                        <button className={classes.modalButton} onClick={createFieldHandler}>Сохранить</button>
+                    </div>
+                </Modal>
+
                 <div className={classes.boxCardsPack}>
                     <div className={classes.blockNameCards}>
-                    <span>Name
+                    <span>Дата
                         <span className={classes.boxArrow}>
                         <i className={`${classes.arrow} ${classes.arrowUp}`}
                            onClick={SortPackNameMinCards}>
@@ -105,7 +103,7 @@ export const Table = () => {
                         </i>
                     </span>
                     </span>
-                        <span>Cards Count
+                        <span>Название
                         <span className={classes.boxArrow}>
                         <i className={`${classes.arrow} ${classes.arrowUp}`}
                            onClick={sortPacksMinCardsHandler}>
@@ -115,7 +113,7 @@ export const Table = () => {
                         </i>
                     </span>
                     </span>
-                        <span>Updated
+                        <span>Количество
                         <span className={classes.boxArrow}>
                         <i className={`${classes.arrow} ${classes.arrowUp}`}
                            onClick={SortPackUpdatedMinCards}>
@@ -125,12 +123,29 @@ export const Table = () => {
                         </i>
                     </span>
                     </span>
-                        <span>Actions</span>
+                        <span>Расстояние</span>
                     </div>
-
-
+                    {
+                        fields.map(f => {
+                            return (
+                                <Fields
+                                    key={f.id}
+                                    id={f.id}
+                                    date={new Date(f.createdAt).toLocaleDateString()}
+                                    name={f.name}
+                                    amount={f.amount}
+                                    distance={f.distance}
+                                />
+                            )
+                        })
+                    }
                 </div>
-
+                <Paginator
+                    cardPacksTotalCount={totalFields}
+                    pageCount={pageCount}
+                    page={pageNumber}
+                    value={value}
+                />
             </div>
         </div>
     );
