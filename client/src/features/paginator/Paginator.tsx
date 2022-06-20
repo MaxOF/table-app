@@ -9,7 +9,6 @@ export type PaginatorPropsType = {
     pageCount: number
     page: number
     portionSize?: number
-    value: number[]
 }
 
 export const Paginator = (
@@ -48,11 +47,11 @@ export const Paginator = (
             }
             {pages
                 .filter(p => p >= leftPortionPageNumber && p <= rightPortionPageNumber)
-                .map(p => {
+                .map((p, index) => {
                     return <span className={page === p ? classes.selectedPage : classes.select}
                                  onClick={() => {
                                      onPageChanged(p)
-                                 }}>{p}</span>
+                                 }} key={index}>{p}</span>
                 })}
             {
                 portionCount > portionNumber &&

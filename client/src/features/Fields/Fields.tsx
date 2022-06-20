@@ -16,7 +16,7 @@ export const Fields = ({   id,
                            distance,
                        }: PropsType) => {
     return (
-        <div key={id} className={classes.container}>
+        <div className={classes.container}>
             <div className={classes.date}>{date}</div>
             <div className={classes.name}>{name}</div>
             <div className={classes.amount}>{amount}</div>

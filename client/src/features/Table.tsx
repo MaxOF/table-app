@@ -1,6 +1,13 @@
-import React, {ChangeEvent, KeyboardEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, KeyboardEvent, SelectHTMLAttributes, useEffect, useState} from 'react';
 import {useDispatch} from "react-redux";
-import {createField, DispatchThunkTable, fetchTable, sortValuesAC} from "./tableReducer";
+import {
+    createField,
+    DispatchThunkTable,
+    fetchTable,
+    setColumnValue, setConditionValue, setFields,
+    setSearchValue,
+    sortValuesAC
+} from "./tableReducer";
 import classes from './Table.module.css'
 
 import {Modal} from "../utils/Modal/Modal";
@@ -9,15 +16,55 @@ import {AppRootStateType, useAppSelector} from "../app/store";
 import {Paginator} from "./paginator/Paginator";
 import {Fields} from "./Fields/Fields";
 
+export type FilterColType = 'Название' | 'Количество' | 'Расстояние'
+export type FilterValuesType = 'Равно' | 'Содержит' | 'Больше' | 'Меньше'
+
 export const Table = () => {
 
     const dispatch = useDispatch<ThunkDispatch<AppRootStateType, unknown, DispatchThunkTable>>()
-    const {fields, totalFields, pageCount, pageNumber, sortValues} = useAppSelector(state => state.table)
+    const {fields, totalFields, pageCount, pageNumber, sortValues, columnValue, conditionValue} = useAppSelector(state => state.table)
 
-    const [value, setValue] = useState([0, 30]);
 
     const [modalActive, setModalActive] = useState<boolean>(false);
     const [name, setName] = useState<string>('')
+
+    const [search, setSearch] = useState<string>('')
+    const [column, setColumn] = useState<string>('Название')
+    const [condition, setCondition] = useState<string>('Равно')
+
+    const conditionHandler = (e: ChangeEvent<HTMLSelectElement>) => {
+        setCondition(e.currentTarget.value)
+    }
+    const columnHandler = (e: ChangeEvent<HTMLSelectElement>) => {
+        setColumn(e.currentTarget.value)
+    }
+    const inputHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.currentTarget.value)
+    }
+    const filteredFields = fields.filter(field => {
+        if(column === 'Название' && condition === 'Равно') {
+            return field.name.toLowerCase().includes(search.toLowerCase())
+        }
+        if(column === 'Количество' && condition === 'Равно') {
+            return field.amount === +search.replace(/\D/g, '')
+        }
+        if(column === 'Расстояние' && condition === 'Равно') {
+            return field.distance === +search.replace(/\D/g, '')
+        }
+        if(column === 'Количество' && condition === 'Больше') {
+            return field.amount > +search.replace(/\D/g, '')
+        }
+        if(column === 'Расстояние' && condition === 'Больше') {
+            return field.distance > +search.replace(/\D/g, '')
+        }
+        if(column === 'Количество' && condition === 'Меньше') {
+            return field.amount < +search.replace(/\D/g, '')
+        }
+        if(column === 'Расстояние' && condition === 'Меньше') {
+            return field.distance < +search.replace(/\D/g, '')
+        }
+    })
+
 
     const onChangeModalHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setName(e.currentTarget.value)
@@ -30,7 +77,7 @@ export const Table = () => {
     }
     useEffect(() => {
         dispatch(fetchTable())
-    }, [pageNumber, sortValues])
+    }, [pageNumber, sortValues, columnValue, conditionValue])
 
     const createFieldHandler = () => {
         dispatch(createField({name, amount: 2, distance: 3}))
@@ -40,26 +87,38 @@ export const Table = () => {
     // for sort
 
     const sortAmountDown = () => {
-        dispatch(sortValuesAC('1amount'))
+        const temp = JSON.parse(JSON.stringify(fields))
+        temp.sort((a: any, b: any) => a.amount > b.amount ? 1 : -1)
+        dispatch(setFields(temp))
     }
     const sortAmountUp = () => {
-        dispatch(sortValuesAC('0amount'))
+        const temp = JSON.parse(JSON.stringify(fields))
+        temp.sort((a: any, b: any) => a.amount > b.amount ? -1 : 1)
+        dispatch(setFields(temp))
     }
 
     const sortNameDown = () => {
-        dispatch(sortValuesAC('1name'))
+        const temp = JSON.parse(JSON.stringify(fields))
+        temp.sort((a: any, b: any) => a.name > b.name ? 1 : -1)
+        dispatch(setFields(temp))
     }
 
     const sortNameUp = () => {
-        dispatch(sortValuesAC('0name'))
+        const temp = JSON.parse(JSON.stringify(fields))
+        temp.sort((a: any, b: any) => a.name > b.name ? -1 : 1)
+        dispatch(setFields(temp))
     }
 
     const sortDistanceDown = () => {
-        dispatch(sortValuesAC('0distance'))
+        const temp = JSON.parse(JSON.stringify(fields))
+        temp.sort((a: any, b: any) => a.distance > b.distance ? 1 : -1)
+        dispatch(setFields(temp))
     }
 
     const sortDistanceUp = () => {
-        dispatch(sortValuesAC('1distance'))
+        const temp = JSON.parse(JSON.stringify(fields))
+        temp.sort((a: any, b: any) => a.distance > b.distance ? -1 : 1)
+        dispatch(setFields(temp))
     }
 
     return (
@@ -90,33 +149,27 @@ export const Table = () => {
                         <button className={classes.modalButton} onClick={createFieldHandler}>Сохранить</button>
                     </div>
                 </Modal>
-                {/*<Modal active={modalActive} setActive={setModalActive}>*/}
-                {/*    <div className={classes.modalTitle}>Добавить новое поле</div>*/}
-                {/*    <div className={classes.modalBox}>*/}
-                {/*        <input*/}
-                {/*            value={name}*/}
-                {/*            onKeyPress={onKeyPressModalHandler}*/}
-                {/*            onChange={onChangeModalHandler}*/}
-                {/*            className={classes.modalInput}*/}
-                {/*            placeholder={'Enter your new pack name...'}*/}
-                {/*            autoFocus*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*    <div className={classes.modalBox}>*/}
-                {/*        <input*/}
-                {/*            value={name}*/}
-                {/*            onKeyPress={onKeyPressModalHandler}*/}
-                {/*            onChange={onChangeModalHandler}*/}
-                {/*            className={classes.modalInput}*/}
-                {/*            placeholder={'Enter your new pack name...'}*/}
-                {/*            autoFocus*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*    <div>*/}
-                {/*        <button className={classes.modalButton} onClick={createFieldHandler}>Сохранить</button>*/}
-                {/*        <button className={classes.modalButton} onClick={createFieldHandler}>Сохранить</button>*/}
-                {/*    </div>*/}
-                {/*</Modal>*/}
+
+                {/*Form for filter table*/}
+
+                <form>
+                    <input
+                        value={search}
+                        onChange={inputHandler}
+                    />
+                    <select onChange={columnHandler} value={column}>
+                        <option value="Название">Название</option>
+                        <option value="Количество">Количество</option>
+                        <option value="Расстояние">Расстояние</option>
+                    </select>
+                    <select onChange={conditionHandler} value={condition}>
+                        <option value="Равно">Равно</option>
+                        <option value="Содержит">Содержит</option>
+                        <option value="Больше">Больше</option>
+                        <option value="Меньше">Меньше</option>
+                    </select>
+                </form>
+
 
                 <div className={classes.boxCardsPack}>
                     <div className={classes.blockNameCards}>
@@ -143,7 +196,7 @@ export const Table = () => {
                         </i>
                     </span>
                     </span>
-                        <span>Расстояние</span>
+                        <span>Расстояние
                         <span className={classes.boxArrow}>
                         <i className={`${classes.arrow} ${classes.arrowUp}`}
                            onClick={sortDistanceUp}>
@@ -151,10 +204,11 @@ export const Table = () => {
                         <i className={`${classes.arrow} ${classes.arrowDown}`}
                            onClick={sortDistanceDown}>
                         </i>
+                        </span>
                     </span>
                     </div>
                     {
-                        fields.map(f => {
+                        filteredFields.map(f => {
                             return (
                                 <Fields
                                     key={f.id}
@@ -172,7 +226,6 @@ export const Table = () => {
                     cardPacksTotalCount={totalFields}
                     pageCount={pageCount}
                     page={pageNumber}
-                    value={value}
                 />
             </div>
         </div>

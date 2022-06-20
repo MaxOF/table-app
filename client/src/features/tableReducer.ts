@@ -24,6 +24,9 @@ export type InitialStateType = {
     pageNumber: number
     totalFields: number
     pageCount: number
+    searchValue: string | number
+    columnValue: string
+    conditionValue: string
 }
 
 //initial state >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -32,7 +35,10 @@ export const initialState = {
     fields: [],
     pageNumber: 1,
     totalFields: 0,
-    pageCount: 10
+    pageCount: 10,
+    searchValue: "",
+    columnValue: '',
+    conditionValue: ''
 }
 
 //reducer>>>>>>>>>>>>>
@@ -56,19 +62,34 @@ export const tableReducer = (state: InitialStateType = initialState, action: Act
             return {
                 ...state, totalFields: action.totalFields
             }
-
+        case 'TABLE/SET-SEARCH-VALUE':
+            return {
+                ...state, searchValue: action.searchValue
+            }
+        case 'TABLE/SET-COLUMN-VALUE':
+            return {
+                ...state, columnValue: action.columnValue
+            }
+        case 'TABLE/SET-CONDITION-VALUE':
+            return {
+                ...state, conditionValue: action.conditionValue
+            }
         default:
             return state
     }
 }
 
 //types for actions>>>>>>>>>>>>>
-type ActionsType = SortValuesType | CreateFieldType | SetFieldsType | SetCurrentPageType | SetTotalCountType
+type ActionsType = SortValuesType | CreateFieldType | SetFieldsType | SetCurrentPageType
+    | SetTotalCountType | SetSearchValueType | SetColumnValueType | SetConditionValueType
 export type SortValuesType = ReturnType<typeof sortValuesAC>
 export type CreateFieldType = ReturnType<typeof createFieldAC>
 export type SetFieldsType = ReturnType<typeof setFields>
 export type SetCurrentPageType = ReturnType<typeof setCurrentPage>
 export type SetTotalCountType = ReturnType<typeof setTotalCount>
+export type SetSearchValueType = ReturnType<typeof setSearchValue>
+export type SetColumnValueType = ReturnType<typeof setColumnValue>
+export type SetConditionValueType = ReturnType<typeof setConditionValue>
 
 //actions>>>>>>>>>>>>>
 export const sortValuesAC = (sortValues: string) => ({type: 'TABLE/SORT-VALUES', sortValues} as const)
@@ -76,6 +97,9 @@ export const createFieldAC = (field: FieldType) => ({type: 'TABLE/CREATE-FIELD',
 export const setFields = (fields: FieldType[]) => ({type: 'TABLE/SET-FIELDS', fields} as const)
 export const setCurrentPage = (pageNumber: number) => ({type: 'TABLE/SET-CURRENT-PAGE', pageNumber} as const)
 export const setTotalCount = (totalFields: number) => ({type: 'TABLE/SET-TOTAL-COUNT', totalFields} as const)
+export const setSearchValue = (searchValue: string | number) => ({type: 'TABLE/SET-SEARCH-VALUE', searchValue} as const)
+export const setColumnValue = (columnValue: string) => ({type: 'TABLE/SET-COLUMN-VALUE', columnValue} as const)
+export const setConditionValue = (conditionValue: string) => ({type: 'TABLE/SET-CONDITION-VALUE', conditionValue} as const)
 
 //thunk types>>>>>>>>>>>>>
 
@@ -98,11 +122,16 @@ export const fetchTable = (): ThunkType => (dispatch: Dispatch, getState: () => 
         page: state.pageNumber || 1,
         totalFields: state.totalFields || 0,
         pageCount: state.pageCount || 10,
-        sortValues: state.sortValues || ''
+        sortValues: state.sortValues || '',
+        searchValue: state.searchValue || "",
+        columnValue: state.columnValue || '',
+        conditionValue: state.conditionValue || '',
+
     }
 
     return fetchValues(payload)
         .then((res) => {
+            console.log(res)
             dispatch(setFields(res.rows))
             dispatch(setTotalCount(res.count))
         })
