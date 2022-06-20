@@ -1,18 +1,19 @@
 import React, {ChangeEvent, KeyboardEvent, useEffect, useState} from 'react';
 import {useDispatch} from "react-redux";
+import {ThunkDispatch} from "redux-thunk";
+
 import {
     createField,
     DispatchThunkTable,
     fetchTable, FieldType,
     setFields,
 } from "./tableReducer";
-import classes from './Table.module.css'
-
 import {Modal} from "../utils/Modal/Modal";
-import {ThunkDispatch} from "redux-thunk";
 import {AppRootStateType, useAppSelector} from "../app/store";
 import {Paginator} from "./paginator/Paginator";
 import {Fields} from "./Fields/Fields";
+
+import classes from './Table.module.css'
 
 
 export const Table = () => {
