@@ -1,7 +1,5 @@
 const {Table} = require('../models/models')
 const ApiError = require('../error/ApiError')
-const {Op} = require("sequelize");
-const {Sequelize} = require("sequelize");
 
 class tableController {
     async fetchAll(req, res) {
