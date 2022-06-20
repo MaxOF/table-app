@@ -5,7 +5,7 @@ import {setCurrentPage} from "../tableReducer";
 
 
 export type PaginatorPropsType = {
-    cardPacksTotalCount: number
+    totalCount: number
     pageCount: number
     page: number
     portionSize?: number
@@ -13,7 +13,7 @@ export type PaginatorPropsType = {
 
 export const Paginator = (
     {
-        cardPacksTotalCount = 0,
+        totalCount = 0,
         pageCount,
         page,
         portionSize = 10,
@@ -22,7 +22,7 @@ export const Paginator = (
 
     const dispatch = useDispatch()
 
-    let pagesCount = Math.ceil(cardPacksTotalCount / pageCount);
+    let pagesCount = Math.ceil(totalCount / pageCount);
     let pages = []
     for (let i = 1; i <= pagesCount; i++) {
         pages.push(i)

@@ -2,14 +2,13 @@ import React from 'react';
 import classes from './Fields.module.css'
 
 export type PropsType = {
-    id: number
     date: string
     name: string
     amount: number
     distance: number
 }
 
-export const Fields = ({   id,
+export const Fields = ({
                            date,
                            name,
                            amount,

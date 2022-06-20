@@ -27,9 +27,6 @@ class tableController {
         }
     }
 
-    async fetchOne(req, res) {
-
-    }
 }
 
 module.exports = new tableController()
